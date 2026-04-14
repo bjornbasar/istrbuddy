@@ -1,0 +1,10 @@
+.git
+.github
+.phpunit-cache
+tests/
+db/*.db
+vendor/
+*.md
+.editorconfig
+.gitignore
+docker-compose.yml
