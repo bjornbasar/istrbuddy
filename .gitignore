@@ -1,0 +1,4 @@
+/vendor/
+/db/istrbuddy.db
+.env
+.DS_Store
