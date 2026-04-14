@@ -7,9 +7,12 @@ RUN composer install --no-dev --optimize-autoloader --no-scripts
 # Stage 2: Production image
 FROM php:8.3-apache
 
-# Enable required extensions and Apache modules
-RUN docker-php-ext-install pdo_sqlite \
-    && a2enmod rewrite
+# Install SQLite dev lib, build pdo_sqlite extension, enable mod_rewrite
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends libsqlite3-dev \
+    && docker-php-ext-install pdo_sqlite \
+    && a2enmod rewrite \
+    && rm -rf /var/lib/apt/lists/*
 
 # Set Apache document root
 ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
