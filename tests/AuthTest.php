@@ -11,7 +11,7 @@ final class AuthTest extends AppTestCase
     #[Test]
     public function login_with_valid_credentials(): void
     {
-        $res = $this->request('POST', '/login', ['username' => 'admin', 'password' => 'admin123']);
+        $res = $this->request('POST', '/login', ['username' => 'admin', 'password' => 'test-only-not-a-secret']);
         $this->assertSame(200, $res->status());
         $body = json_decode($res->body(), true);
         $this->assertSame('Logged in', $body['message']);

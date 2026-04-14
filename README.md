@@ -18,11 +18,17 @@ Open http://localhost:8080/issues
 
 ## Demo accounts
 
-| Username | Password | Roles | Can |
-|----------|----------|-------|-----|
-| admin | admin123 | admin, editor | Everything (create, edit status, delete) |
-| editor | editor123 | editor | Create issues, edit status |
-| viewer | viewer123 | viewer | View only |
+Seed passwords are set via environment variables (default: `changeme`):
+
+```bash
+SEED_ADMIN_PASS=mypass SEED_EDITOR_PASS=mypass SEED_VIEWER_PASS=mypass bin/karhu db:seed
+```
+
+| Username | Env var | Roles | Can |
+|----------|---------|-------|-----|
+| admin | `SEED_ADMIN_PASS` | admin, editor | Everything (create, edit status, delete) |
+| editor | `SEED_EDITOR_PASS` | editor | Create issues, edit status |
+| viewer | `SEED_VIEWER_PASS` | viewer | View only |
 
 ## Features
 

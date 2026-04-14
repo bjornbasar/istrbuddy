@@ -34,12 +34,12 @@ final class SeedCommand
         $db->pdo()->exec($schema);
         fwrite(\STDOUT, "Schema applied.\n");
 
-        // Seed users
+        // Seed users — passwords from env vars (defaults for local dev only)
         $hasher = new PasswordHasher();
         $users = [
-            ['username' => 'admin', 'password' => 'admin123', 'display_name' => 'Admin', 'roles' => ['admin', 'editor']],
-            ['username' => 'editor', 'password' => 'editor123', 'display_name' => 'Editor', 'roles' => ['editor']],
-            ['username' => 'viewer', 'password' => 'viewer123', 'display_name' => 'Viewer', 'roles' => ['viewer']],
+            ['username' => 'admin', 'password' => getenv('SEED_ADMIN_PASS') ?: 'changeme', 'display_name' => 'Admin', 'roles' => ['admin', 'editor']],
+            ['username' => 'editor', 'password' => getenv('SEED_EDITOR_PASS') ?: 'changeme', 'display_name' => 'Editor', 'roles' => ['editor']],
+            ['username' => 'viewer', 'password' => getenv('SEED_VIEWER_PASS') ?: 'changeme', 'display_name' => 'Viewer', 'roles' => ['viewer']],
         ];
 
         foreach ($users as $user) {

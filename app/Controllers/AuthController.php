@@ -90,7 +90,7 @@ final class AuthController
                 <label>Password<input type="password" name="password" required></label>
                 <button type="submit">Login</button>
             </form>
-            <p class="hint">Demo: admin/admin123, editor/editor123, viewer/viewer123</p>
+            <p class="hint">Set seed passwords via SEED_ADMIN_PASS / SEED_EDITOR_PASS / SEED_VIEWER_PASS env vars.</p>
         </div>
         HTML;
     }

@@ -21,11 +21,13 @@ $schema = file_get_contents(__DIR__ . '/../db/schema.sql');
 $db->pdo()->exec($schema);
 
 // Seed users
+// Test passwords — not real credentials; used only in the in-memory test DB
 $hasher = new PasswordHasher();
+$testPass = 'test-only-not-a-secret';
 $users = [
-    ['username' => 'admin', 'hash' => $hasher->hash('admin123'), 'display_name' => 'Admin', 'roles' => ['admin', 'editor']],
-    ['username' => 'editor', 'hash' => $hasher->hash('editor123'), 'display_name' => 'Editor', 'roles' => ['editor']],
-    ['username' => 'viewer', 'hash' => $hasher->hash('viewer123'), 'display_name' => 'Viewer', 'roles' => ['viewer']],
+    ['username' => 'admin', 'hash' => $hasher->hash($testPass), 'display_name' => 'Admin', 'roles' => ['admin', 'editor']],
+    ['username' => 'editor', 'hash' => $hasher->hash($testPass), 'display_name' => 'Editor', 'roles' => ['editor']],
+    ['username' => 'viewer', 'hash' => $hasher->hash($testPass), 'display_name' => 'Viewer', 'roles' => ['viewer']],
 ];
 
 foreach ($users as $user) {
