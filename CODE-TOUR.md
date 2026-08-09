@@ -190,4 +190,4 @@ So carry two questions in: *what is the entry point when there's no request?* (t
 
 ---
 
-*Tour covers istrbuddy @ `c51e454` (v0.1.0). Companion docs: [DOCS.md](DOCS.md), [karhu/CODE-TOUR.md](../karhu/CODE-TOUR.md) (engine), [mishka/CODE-TOUR.md](../mishka/CODE-TOUR.md) (the maximal counterpart). Next tour: ansible.*
+*Tour covers istrbuddy @ `613b9a3` (v0.1.0). Companion docs: [DOCS.md](DOCS.md), [karhu/CODE-TOUR.md](../karhu/CODE-TOUR.md) (engine), [mishka/CODE-TOUR.md](../mishka/CODE-TOUR.md) (the maximal counterpart). Next tour: ansible.*
