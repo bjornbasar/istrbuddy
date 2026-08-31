@@ -1,0 +1,22 @@
+# Deploy compose — runs on Bosco (192.168.4.34, x86_64) at /data/istrbuddy-docs.
+# The istrbuddy reference, Ayula-fronted at ONE name:
+#   https://docs.bjornbasar.com/istrbuddy/    (Cloudflare Access)
+#
+# Private-only: a reference app with documented default passwords.
+#
+# NOT on Hurska, unlike every other static site here. Hurska runs thirteen containers on
+# ~500 MB free; Bosco runs three on ~3 GB. Hurska is the static tier but is the least able
+# to absorb another one, and a docs page is the safest thing to put on a WiFi host — brief
+# unreachability is not an incident, which is why the apps stay where they are.
+#
+# Bosco's ports:  5180 mishka-app · 8101 datvi-docs · 8103 wojtek-docs · 8105 istrbuddy-docs
+#
+# NB the APPLICATION is not deployed anywhere — istrbuddy runs locally on demand. Only its
+# documentation has a permanent home.
+services:
+  istrbuddy-docs:
+    image: 192.168.4.9:5000/istrbuddy-docs:latest
+    container_name: istrbuddy-docs
+    ports:
+      - "8105:80"
+    restart: unless-stopped

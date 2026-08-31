@@ -1,0 +1,75 @@
+site_name: IsTrBuddy
+site_description: Issue Tracking Buddy — a karhu-powered issue tracker, and karhu's first real dogfood
+# The gated host, as with wojtek and paddington: there is no public copy of this site to name
+# as canonical. Sites served under BOTH docs hostnames (karhu, otso, datvi) must point at
+# docs.twobots.dev instead — naming a Cloudflare Access login as canonical is worse than
+# naming nothing.
+#
+# The trailing path segment is load-bearing: mkdocs-material builds the canonical link and the
+# sitemap from this value, and a bare host would advertise every page at the site root.
+site_url: https://docs.bjornbasar.com/istrbuddy/
+repo_url: https://github.com/bjornbasar/istrbuddy
+repo_name: bjornbasar/istrbuddy
+copyright: MIT licensed
+
+theme:
+  name: material
+  # Sixth palette in the docs tier. Deliberately NOT karhu's deep orange, despite this being
+  # karhu's reference app: they are separate sites and sharing a colour would suggest one is
+  # a section of the other.
+  palette:
+    - scheme: slate
+      primary: green
+      accent: lime
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+    - scheme: default
+      primary: green
+      accent: lime
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+  features:
+    - navigation.sections
+    - navigation.top
+    - navigation.tracking
+    - content.code.copy
+    - content.code.annotate
+    - search.highlight
+    - search.suggest
+    - toc.follow
+
+nav:
+  - Home: index.md
+  - Routes: routes.md
+  - Operating: operating.md
+
+# Turn link and anchor problems into warnings, which `--strict` then turns into a failed
+# build. Without this, a cross-reference to a renamed heading is only an INFO message and
+# ships broken. ci/deploy.sh runs `build --strict`.
+validation:
+  omitted_files: warn
+  absolute_links: warn
+  unrecognized_links: warn
+  anchors: warn
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - def_list
+  - pymdownx.details
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - toc:
+      permalink: true
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/bjornbasar/istrbuddy
