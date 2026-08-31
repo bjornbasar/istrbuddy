@@ -62,7 +62,7 @@ ci_log "rendered $PAGES pages"
 # so a canonical pointing there would advertise a URL search engines can never fetch.
 grep -q 'rel="canonical" href="https://docs.bjornbasar.com/istrbuddy/' site/index.html \
   || ci_die "canonical is missing or points elsewhere — check site_url in mkdocs.yml"
-ci_log "canonical names the public host (correct)"
+ci_log "canonical names the gated host (correct) — istrbuddy has no public copy"
 
 # ---------------------------------------------------------------------- build + ship
 ci_log "build + push multi-arch: $IMG (:latest + :sha-$CI_SHA)"
@@ -71,7 +71,12 @@ docker buildx build --builder multiarch --platform linux/amd64,linux/arm64 \
 
 ci_log "sync compose + redeploy on Bosco"
 ssh "$BOSCO" "mkdir -p $BOSCO_DIR"
-rsync -a docker-compose.yml "$BOSCO:$BOSCO_DIR/"
+# ⚠ docker-compose.docs.yml, renamed on arrival. This repo ALSO has its own
+# docker-compose.yml for the PHP application, which carries a `build: .` — rsyncing that one
+# sent Bosco a compose file that tried to build istrbuddy itself from a context containing no
+# Dockerfile, and the deploy died at "failed to read dockerfile". Same class of mistake as
+# generating plain Dockerfile/nginx.conf names into a repo that already owns them.
+rsync -a docker-compose.docs.yml "$BOSCO:$BOSCO_DIR/docker-compose.yml"
 ssh "$BOSCO" "cd $BOSCO_DIR && docker compose pull && docker compose up -d --remove-orphans && docker image prune -f"
 
 # ---------------------------------------------------------------------- smoke tests
