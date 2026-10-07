@@ -81,16 +81,19 @@ final class AuthController
         $errorHtml = $error !== '' ? "<p class=\"error\">{$error}</p>" : '';
         $csrf = Csrf::field();
         return <<<HTML
-        <div class="auth-form">
-            <h2>Sign In</h2>
-            {$errorHtml}
-            <form method="POST" action="/login">
-                {$csrf}
-                <label>Username<input type="text" name="username" required autofocus></label>
-                <label>Password<input type="password" name="password" required></label>
-                <button type="submit">Login</button>
-            </form>
-            <p class="hint">Set seed passwords via SEED_ADMIN_PASS / SEED_EDITOR_PASS / SEED_VIEWER_PASS env vars.</p>
+        <div class="auth-wrap">
+            <div class="auth-card">
+                <div class="auth-logo">IsTrBuddy</div>
+                <h1>Sign in</h1>
+                <p class="auth-sub">Track issues with your team</p>
+                {$errorHtml}
+                <form method="POST" action="/login">
+                    {$csrf}
+                    <label>Username<input type="text" name="username" required autofocus></label>
+                    <label>Password<input type="password" name="password" required></label>
+                    <button type="submit" class="btn btn-primary btn-full">Sign in</button>
+                </form>
+            </div>
         </div>
         HTML;
     }

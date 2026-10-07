@@ -178,40 +178,46 @@ final class IssueController
     /** @param list<array<string, mixed>> $issues */
     private function indexView(array $issues, array $counts, ?string $activeStatus): string
     {
-        $username = Session::get('username');
-        $isLoggedIn = is_string($username) && $username !== '';
         $canCreate = $this->canCreate();
 
-        // Status filter tabs
         $tabs = '';
         foreach (['all' => $counts['total'], 'open' => $counts['open'], 'in_progress' => $counts['in_progress'], 'closed' => $counts['closed']] as $key => $count) {
             $href = $key === 'all' ? '/issues' : "/issues?status={$key}";
             $active = ($activeStatus === null && $key === 'all') || $activeStatus === $key ? ' class="active"' : '';
-            $label = str_replace('_', ' ', ucfirst($key));
-            $tabs .= "<a href=\"{$href}\"{$active}>{$label} ({$count})</a> ";
+            $label = ucwords(str_replace('_', ' ', $key));
+            $tabs .= "<a href=\"{$href}\"{$active}>{$label} <small>{$count}</small></a>";
         }
 
-        // Issue rows
         $rows = '';
         foreach ($issues as $issue) {
             $priority = htmlspecialchars((string) $issue['priority']);
-            $title = htmlspecialchars((string) $issue['title']);
-            $status = htmlspecialchars(str_replace('_', ' ', (string) $issue['status']));
-            $author = htmlspecialchars((string) $issue['author']);
-            $id = (int) $issue['id'];
-            $rows .= "<tr><td><a href=\"/issues/{$id}\">#{$id}</a></td><td><a href=\"/issues/{$id}\">{$title}</a></td>";
+            $title    = htmlspecialchars((string) $issue['title']);
+            $status   = htmlspecialchars((string) $issue['status']);
+            $statusLabel = ucwords(str_replace('_', ' ', $status));
+            $author   = htmlspecialchars((string) $issue['author']);
+            $assignee = $issue['assignee'] ? htmlspecialchars((string) $issue['assignee']) : '<span style="color:var(--muted)">—</span>';
+            $id       = (int) $issue['id'];
+            $rows .= "<tr>";
+            $rows .= "<td style=\"color:var(--muted);font-size:.82rem\">#{$id}</td>";
+            $rows .= "<td><a href=\"/issues/{$id}\">{$title}</a></td>";
             $rows .= "<td><span class=\"badge badge-{$priority}\">{$priority}</span></td>";
-            $rows .= "<td><span class=\"badge badge-{$issue['status']}\">{$status}</span></td>";
-            $rows .= "<td>{$author}</td><td>{$issue['created_at']}</td></tr>";
+            $rows .= "<td><span class=\"badge badge-{$status}\">{$statusLabel}</span></td>";
+            $rows .= "<td style=\"font-size:.85rem\">{$author}</td>";
+            $rows .= "<td style=\"font-size:.85rem\">{$assignee}</td>";
+            $rows .= "</tr>";
         }
 
+        $emptyState = $rows === '' ? '<tr><td colspan="6"><div class="empty-state"><p>No issues found.</p></div></td></tr>' : '';
         $newBtn = $canCreate ? '<a href="/issues/new" class="btn btn-primary">New Issue</a>' : '';
 
         return <<<HTML
-        <div class="toolbar"><div class="tabs">{$tabs}</div>{$newBtn}</div>
+        <div class="toolbar">
+            <div class="tabs">{$tabs}</div>
+            {$newBtn}
+        </div>
         <table>
-            <thead><tr><th>#</th><th>Title</th><th>Priority</th><th>Status</th><th>Author</th><th>Created</th></tr></thead>
-            <tbody>{$rows}</tbody>
+            <thead><tr><th>#</th><th>Title</th><th>Priority</th><th>Status</th><th>Author</th><th>Assignee</th></tr></thead>
+            <tbody>{$rows}{$emptyState}</tbody>
         </table>
         HTML;
     }
@@ -219,43 +225,58 @@ final class IssueController
     /** @param array<string, mixed> $issue */
     private function showView(array $issue): string
     {
-        $id = (int) $issue['id'];
-        $title = htmlspecialchars((string) $issue['title']);
-        $body = nl2br(htmlspecialchars((string) $issue['body']));
-        $status = htmlspecialchars((string) $issue['status']);
+        $id       = (int) $issue['id'];
+        $title    = htmlspecialchars((string) $issue['title']);
+        $body     = nl2br(htmlspecialchars((string) $issue['body']));
+        $status   = htmlspecialchars((string) $issue['status']);
         $priority = htmlspecialchars((string) $issue['priority']);
-        $author = htmlspecialchars((string) $issue['author']);
-        $csrf = Csrf::field();
+        $author   = htmlspecialchars((string) $issue['author']);
+        $csrf     = Csrf::field();
         $canDelete = $this->canDelete();
+
+        $assigneeMeta = $issue['assignee']
+            ? ' <span class="meta-sep">·</span> assigned to <strong>' . htmlspecialchars((string) $issue['assignee']) . '</strong>'
+            : '';
 
         $statusOptions = '';
         foreach (['open', 'in_progress', 'closed'] as $s) {
             $selected = $s === $issue['status'] ? ' selected' : '';
-            $label = str_replace('_', ' ', ucfirst($s));
+            $label = ucwords(str_replace('_', ' ', $s));
             $statusOptions .= "<option value=\"{$s}\"{$selected}>{$label}</option>";
         }
 
         $deleteBtn = $canDelete
-            ? "<form method=\"POST\" action=\"/issues/{$id}/delete\" class=\"inline\" onsubmit=\"return confirm('Delete this issue?')\">{$csrf}<button type=\"submit\" class=\"btn btn-danger\">Delete</button></form>"
+            ? "<form method=\"POST\" action=\"/issues/{$id}/delete\" class=\"inline\" onsubmit=\"return confirm('Permanently delete this issue?')\">{$csrf}<button type=\"submit\" class=\"btn btn-danger btn-sm\">Delete</button></form>"
             : '';
 
+        $statusLabel = ucwords(str_replace('_', ' ', $status));
+
         return <<<HTML
-        <div class="issue-detail">
-            <div class="issue-header">
-                <h2>#{$id} — {$title}</h2>
-                <span class="badge badge-{$priority}">{$priority}</span>
-                <span class="badge badge-{$status}">{$status}</span>
-            </div>
-            <p class="meta">by {$author} &middot; {$issue['created_at']}</p>
-            <div class="issue-body">{$body}</div>
-            <div class="issue-actions">
-                <form method="POST" action="/issues/{$id}/status" class="inline">
-                    {$csrf}
+        <div class="issue-title-row">
+            <span class="issue-num">#{$id}</span>
+            <h1 class="issue-title">{$title}</h1>
+        </div>
+        <div class="issue-meta">
+            <span class="badge badge-{$priority}">{$priority}</span>
+            <span class="badge badge-{$status}">{$statusLabel}</span>
+            <span class="meta-sep">·</span>
+            <span>by <strong>{$author}</strong></span>
+            <span class="meta-sep">·</span>
+            <span>{$issue['created_at']}</span>
+            {$assigneeMeta}
+        </div>
+        <div class="issue-body-card">{$body}</div>
+        <div class="issue-action-bar">
+            <form method="POST" action="/issues/{$id}/status" class="inline">
+                {$csrf}
+                <div class="input-group">
                     <select name="status">{$statusOptions}</select>
-                    <button type="submit" class="btn">Update Status</button>
-                </form>
+                    <button type="submit" class="btn">Update status</button>
+                </div>
+            </form>
+            <div class="action-right">
                 {$deleteBtn}
-                <a href="/issues" class="btn">Back</a>
+                <a href="/issues" class="btn btn-ghost btn-sm">← Back to issues</a>
             </div>
         </div>
         HTML;
@@ -285,16 +306,22 @@ final class IssueController
         }
 
         return <<<HTML
-        <h2>New Issue</h2>
+        <div class="page-header">
+            <h1>New Issue</h1>
+            <a href="/issues" class="btn btn-ghost btn-sm">Cancel</a>
+        </div>
         {$errorBlock}
-        <form method="POST" action="/issues">
-            {$csrf}
-            <label>Title<input type="text" name="title" value="{$title}" required minlength="3" maxlength="100"></label>
-            <label>Description<textarea name="body" rows="6" required minlength="10">{$body}</textarea></label>
-            <label>Priority<select name="priority">{$priorityOptions}</select></label>
-            <button type="submit" class="btn btn-primary">Create Issue</button>
-            <a href="/issues" class="btn">Cancel</a>
-        </form>
+        <div class="form-card">
+            <form method="POST" action="/issues">
+                {$csrf}
+                <label>Title<input type="text" name="title" value="{$title}" required minlength="3" maxlength="100" placeholder="Short, descriptive title"></label>
+                <label>Description<textarea name="body" rows="7" required minlength="10" placeholder="Describe the issue in detail…">{$body}</textarea></label>
+                <label>Priority<select name="priority">{$priorityOptions}</select></label>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Create Issue</button>
+                </div>
+            </form>
+        </div>
         HTML;
     }
 }

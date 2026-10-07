@@ -33,59 +33,110 @@ final class Layout
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <title>{$title} — IsTrBuddy</title>
             <style>
-                :root { --bg: #0f1117; --surface: #1a1d27; --border: #2a2d37; --text: #e0e0e0; --muted: #888; --primary: #4a9eff; --danger: #ef4444; --success: #22c55e; --warning: #f59e0b; }
+                :root {
+                    --bg: #0d0f16; --surface: #13161f; --surface-2: #1b1f2e; --border: #252836;
+                    --text: #dde1f0; --muted: #6c7591; --dim: #9aa3c2;
+                    --primary: #4a9eff; --primary-hover: #2d88f0;
+                    --danger: #ef4444; --danger-hover: #dc2626;
+                    --success: #22c55e; --warning: #f59e0b;
+                    --radius: 6px; --radius-pill: 999px;
+                    --shadow-sm: 0 1px 3px rgba(0,0,0,.5); --shadow: 0 4px 14px rgba(0,0,0,.55);
+                }
                 * { box-sizing: border-box; margin: 0; padding: 0; }
-                body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+                body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; font-size: 15px; }
                 a { color: var(--primary); text-decoration: none; }
                 a:hover { text-decoration: underline; }
 
-                header { background: var(--surface); border-bottom: 1px solid var(--border); padding: .75rem 1.5rem; display: flex; justify-content: space-between; align-items: center; }
-                header h1 { font-size: 1.1rem; }
+                /* ---- Header ---- */
+                header { position: relative; background: var(--surface); border-bottom: 1px solid var(--border); padding: .875rem 1.75rem; display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shadow-sm); }
+                header::before { content: ''; position: absolute; inset: 0 0 auto 0; height: 3px; background: linear-gradient(90deg, var(--primary) 0%, #6366f1 100%); }
+                header h1 { font-size: 1rem; font-weight: 700; letter-spacing: -.01em; }
                 header h1 a { color: var(--text); }
-                .nav-right { display: flex; gap: 1rem; align-items: center; }
-                .user { font-size: .85rem; }
+                .nav-right { display: flex; gap: .75rem; align-items: center; }
+                .user { font-size: .82rem; color: var(--dim); }
 
-                main { max-width: 960px; margin: 2rem auto; padding: 0 1.5rem; }
+                main { max-width: 960px; margin: 2rem auto; padding: 0 1.75rem; }
 
-                .btn { display: inline-block; padding: .4rem .8rem; border: 1px solid var(--border); border-radius: 4px; background: var(--surface); color: var(--text); cursor: pointer; font-size: .85rem; }
-                .btn:hover { background: var(--border); text-decoration: none; }
-                .btn-primary { background: var(--primary); color: #fff; border-color: var(--primary); }
-                .btn-danger { background: var(--danger); color: #fff; border-color: var(--danger); }
-                .btn-sm { padding: .25rem .5rem; font-size: .8rem; }
+                /* ---- Buttons ---- */
+                .btn { display: inline-flex; align-items: center; gap: .35rem; padding: .45rem 1rem; border-radius: var(--radius); border: 1px solid var(--border); background: var(--surface-2); color: var(--text); cursor: pointer; font-size: .875rem; font-weight: 500; font-family: inherit; text-decoration: none; transition: background .15s, border-color .15s; white-space: nowrap; line-height: 1.4; }
+                .btn:hover { background: #252836; border-color: #343748; text-decoration: none; }
+                .btn:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+                .btn-primary { background: var(--primary); border-color: var(--primary); color: #fff; }
+                .btn-primary:hover { background: var(--primary-hover); border-color: var(--primary-hover); }
+                .btn-danger { background: var(--danger); border-color: var(--danger); color: #fff; }
+                .btn-danger:hover { background: var(--danger-hover); border-color: var(--danger-hover); }
+                .btn-ghost { background: transparent; border-color: transparent; color: var(--dim); }
+                .btn-ghost:hover { background: var(--surface-2); border-color: var(--border); color: var(--text); }
+                .btn-sm { padding: .3rem .65rem; font-size: .8rem; }
+                .btn-full { width: 100%; justify-content: center; }
 
-                table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
-                th, td { padding: .6rem .8rem; text-align: left; border-bottom: 1px solid var(--border); }
-                th { color: var(--muted); font-size: .8rem; text-transform: uppercase; }
-                tr:hover { background: var(--surface); }
+                /* ---- Badges ---- */
+                .badge { display: inline-flex; align-items: center; padding: .2rem .65rem; border-radius: var(--radius-pill); font-size: .68rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; }
+                .badge-open { background: #1b3a5c; color: #7dbfff; }
+                .badge-in_progress { background: #3b2e0a; color: #fbbf24; }
+                .badge-closed { background: #1a3025; color: #4ade80; }
+                .badge-low { background: #1a3025; color: #4ade80; }
+                .badge-medium { background: #2f2415; color: #fbbf24; }
+                .badge-high { background: #3a1c1c; color: #f87171; }
+                .badge-critical { background: #4a1010; color: #fc8181; border: 1px solid #7f1d1d; }
 
-                .badge { padding: .15rem .5rem; border-radius: 3px; font-size: .75rem; font-weight: 600; }
-                .badge-open { background: #1e3a5f; color: var(--primary); }
-                .badge-in_progress { background: #3b3210; color: var(--warning); }
-                .badge-closed { background: #1a2e1a; color: var(--success); }
-                .badge-low { background: #1a2e1a; color: var(--success); }
-                .badge-medium { background: #2a2520; color: var(--warning); }
-                .badge-high { background: #3b2020; color: #f87171; }
-                .badge-critical { background: #4a1515; color: var(--danger); }
+                /* ---- Table ---- */
+                table { width: 100%; border-collapse: collapse; }
+                thead tr { border-bottom: 1px solid var(--border); }
+                th { padding: .6rem .8rem; text-align: left; color: var(--muted); font-size: .72rem; font-weight: 600; text-transform: uppercase; letter-spacing: .07em; }
+                td { padding: .7rem .8rem; border-bottom: 1px solid var(--border); vertical-align: middle; }
+                tbody tr { transition: background .1s; }
+                tbody tr:hover { background: var(--surface-2); }
+                tbody tr:last-child td { border-bottom: none; }
 
-                .toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
-                .tabs a { padding: .4rem .8rem; border-radius: 4px; font-size: .85rem; color: var(--muted); }
-                .tabs a.active { background: var(--surface); color: var(--text); }
-                .tabs a:hover { text-decoration: none; color: var(--text); }
+                /* ---- Toolbar & tabs ---- */
+                .toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; gap: .5rem; flex-wrap: wrap; }
+                .tabs { display: flex; gap: .2rem; }
+                .tabs a { padding: .38rem .9rem; border-radius: var(--radius-pill); font-size: .82rem; font-weight: 500; color: var(--muted); transition: background .15s, color .15s; }
+                .tabs a:hover { background: var(--surface-2); color: var(--dim); text-decoration: none; }
+                .tabs a.active { background: var(--primary); color: #fff; }
 
-                label { display: block; margin-bottom: 1rem; font-size: .85rem; color: var(--muted); }
-                input, textarea, select { display: block; width: 100%; margin-top: .25rem; padding: .5rem; background: var(--surface); border: 1px solid var(--border); border-radius: 4px; color: var(--text); font-size: .9rem; }
-                textarea { resize: vertical; }
+                /* ---- Forms ---- */
+                label { display: block; margin-bottom: 1.25rem; font-size: .82rem; font-weight: 500; color: var(--dim); }
+                input, textarea, select { display: block; width: 100%; margin-top: .35rem; padding: .55rem .75rem; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text); font-size: .9rem; font-family: inherit; transition: border-color .15s; }
+                input:focus, textarea:focus, select:focus { outline: none; border-color: var(--primary); }
+                textarea { resize: vertical; min-height: 120px; }
 
-                .auth-form { max-width: 360px; margin: 4rem auto; }
-                .error { color: var(--danger); margin-bottom: 1rem; }
-                .errors { color: var(--danger); margin-bottom: 1rem; padding-left: 1.5rem; }
-                .hint { color: var(--muted); font-size: .8rem; margin-top: 1rem; }
+                /* joined select+button */
+                .input-group { display: flex; }
+                .input-group select, .input-group input { border-radius: var(--radius) 0 0 var(--radius); border-right: 0; flex: 1; min-width: 0; margin-top: 0; }
+                .input-group .btn { border-radius: 0 var(--radius) var(--radius) 0; }
+
+                /* ---- Auth ---- */
+                .auth-wrap { display: flex; justify-content: center; padding: 4rem 1rem; }
+                .auth-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 2.5rem; width: 100%; max-width: 380px; box-shadow: var(--shadow); }
+                .auth-logo { font-size: 1rem; font-weight: 700; color: var(--primary); margin-bottom: 1.5rem; }
+                .auth-card h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: .3rem; }
+                .auth-sub { color: var(--muted); font-size: .83rem; margin-bottom: 1.75rem; }
+                .error { color: var(--danger); font-size: .85rem; margin-bottom: 1rem; padding: .6rem .75rem; background: rgba(239,68,68,.1); border-radius: var(--radius); border: 1px solid rgba(239,68,68,.25); }
+                .errors { color: var(--danger); font-size: .85rem; margin-bottom: 1.25rem; padding: .75rem 1rem .75rem 1.5rem; background: rgba(239,68,68,.08); border-radius: var(--radius); border: 1px solid rgba(239,68,68,.2); }
+
+                /* ---- Issue detail ---- */
+                .issue-title-row { display: flex; align-items: baseline; gap: .6rem; flex-wrap: wrap; margin-bottom: .6rem; }
+                .issue-num { font-size: 1.4rem; font-weight: 700; color: var(--muted); flex-shrink: 0; }
+                .issue-title { font-size: 1.4rem; font-weight: 700; }
+                .issue-meta { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; color: var(--muted); font-size: .83rem; margin-bottom: 1.5rem; }
+                .issue-meta .badge { margin-right: .15rem; }
+                .meta-sep { color: var(--border); }
+                .issue-body-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem 1.5rem; margin-bottom: 1.5rem; line-height: 1.7; color: var(--dim); }
+                .issue-action-bar { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding-top: 1.25rem; border-top: 1px solid var(--border); flex-wrap: wrap; }
+                .action-right { display: flex; gap: .5rem; align-items: center; }
+
+                /* ---- New issue form ---- */
+                .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+                .page-header h1 { font-size: 1.25rem; font-weight: 700; }
+                .form-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.75rem; }
+                .form-actions { margin-top: .25rem; }
+
+                /* ---- Misc ---- */
                 .inline { display: inline; }
-                .meta { color: var(--muted); font-size: .85rem; margin: .5rem 0 1rem; }
-                .issue-body { background: var(--surface); padding: 1rem; border-radius: 4px; margin: 1rem 0; }
-                .issue-actions { display: flex; gap: .5rem; align-items: center; margin-top: 1rem; }
-                .issue-header { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; }
-                .issue-header h2 { margin-right: auto; }
+                .empty-state { text-align: center; padding: 3rem 1rem; color: var(--muted); }
+                .empty-state p { font-size: .95rem; }
             </style>
         </head>
         <body>
